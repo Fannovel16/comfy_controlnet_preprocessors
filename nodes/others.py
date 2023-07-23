@@ -1,5 +1,5 @@
 from .util import common_annotator_call, img_np_to_tensor
-from ..v11 import tile, inpaint, inpaint_lama
+from ..v11 import tile, inpaint, inpaint_lama, reference_only
 from .. import mp_face_mesh, color
 
 class Media_Pipe_Face_Mesh_Preprocessor:
@@ -70,11 +70,26 @@ class Inpaint_Lama_Preprocessor:
     CATEGORY = "preprocessors/inpaint"
     def preprocess(self, image, mask):
         return inpaint_lama.preprocess(image, mask)
+    
+class Reference_Only:
+    @classmethod
+    def INPUT_TYPES(s):
+        return {"required": {"style_fidelity": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.1}),
+                              "ref": ("LATENT",), 
+                              "model": ("MODEL",)}}
+    
+    RETURN_TYPES = ("MODEL",)
+    FUNCTION = "preprocess"
 
+    CATEGORY = "preprocessors/reference_only"
+    def preprocess(self, style_fidelity, ref, model):
+         return reference_only.preprocess(style_fidelity, ref, model)
+    
 NODE_CLASS_MAPPINGS = {
     "MediaPipe-FaceMeshPreprocessor": Media_Pipe_Face_Mesh_Preprocessor,
     "ColorPreprocessor": Color_Preprocessor,
     "TilePreprocessor": Tile_Preprocessor,
     "InpaintPreprocessor": Inpaint_Preprocessor,
-    "InpaintLamaPreprocessor": Inpaint_Lama_Preprocessor
+    "InpaintLamaPreprocessor": Inpaint_Lama_Preprocessor,
+    "ReferenceOnly": Reference_Only
 }
