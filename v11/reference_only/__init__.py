@@ -72,8 +72,8 @@ def preprocess(style_fidelity, ref, model):
 
         if torch.all(timestep == 0):
             model.model_options.pop("model_function_wrapper")
-            model.model_options["transformer_options"]["patches"]["attn1_patch"].pop(-1)
-            model.model_options["transformer_options"]["patches"]["attn1_output_patch"].pop(-1)
+            model.model_options["transformer_options"]["patches"]["attn1_patch"].pop(attn1_patch_index)
+            model.model_options["transformer_options"]["patches"]["attn1_output_patch"].pop(attn1_output_patch_index)
 
         return output
 
@@ -97,5 +97,8 @@ def preprocess(style_fidelity, ref, model):
     model.set_model_unet_function_wrapper(unet_function_wrapper)
     model.set_model_attn1_patch(attn1_patch)
     model.set_model_attn1_output_patch(attn1_output_patch)
+
+    attn1_patch_index = model.model_options["transformer_options"]["patches"]["attn1_patch"].index(attn1_patch)
+    attn1_output_patch_index = model.model_options["transformer_options"]["patches"]["attn1_output_patch"].index(attn1_output_patch)
 
     return (model,)
