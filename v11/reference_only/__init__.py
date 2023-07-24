@@ -71,7 +71,9 @@ def preprocess(style_fidelity, ref, model):
         bank.clear()
 
         if torch.all(timestep == 0):
-            model.unpatch_model()
+            model.model_options.pop("model_function_wrapper")
+            model.model_options["transformer_options"]["patches"]["attn1_patch"].pop(-1)
+            model.model_options["transformer_options"]["patches"]["attn1_output_patch"].pop(-1)
 
         return output
 
@@ -80,6 +82,9 @@ def preprocess(style_fidelity, ref, model):
         for child in model.children():
             result += torch_dfs(child)
         return result
+    
+    if style_fidelity == 0:
+        return (model,)
 
     ref = model.model.process_latent_in(ref["samples"])
     original_noise = prepare_noise(ref, randint(0, 18446744073709552000))
