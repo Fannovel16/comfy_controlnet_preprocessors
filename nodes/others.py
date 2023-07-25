@@ -71,7 +71,7 @@ class Inpaint_Lama_Preprocessor:
     def preprocess(self, image, mask):
         return inpaint_lama.preprocess(image, mask)
     
-class Reference_Only:
+class Reference_Only_Preprocessor:
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {"style_fidelity": ("FLOAT", {"default": 0.5, "min": 0.0, "max": 1.0, "step": 0.1}),
@@ -91,5 +91,5 @@ NODE_CLASS_MAPPINGS = {
     "TilePreprocessor": Tile_Preprocessor,
     "InpaintPreprocessor": Inpaint_Preprocessor,
     "InpaintLamaPreprocessor": Inpaint_Lama_Preprocessor,
-    "ReferenceOnly": Reference_Only
+    "ReferenceOnlyPreprocessor": Reference_Only_Preprocessor
 }
