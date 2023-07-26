@@ -70,11 +70,6 @@ def preprocess(style_fidelity, ref, model):
         output = model_function(input_x, timestep, **c)
         bank.clear()
 
-        if torch.all(timestep == 0):
-            model.model_options.pop("model_function_wrapper")
-            model.model_options["transformer_options"]["patches"]["attn1_patch"].pop(attn1_patch_index)
-            model.model_options["transformer_options"]["patches"]["attn1_output_patch"].pop(attn1_output_patch_index)
-
         return output
 
     def torch_dfs(model):
@@ -94,11 +89,9 @@ def preprocess(style_fidelity, ref, model):
 
     MODE = "write"
 
-    model.set_model_unet_function_wrapper(unet_function_wrapper)
-    model.set_model_attn1_patch(attn1_patch)
-    model.set_model_attn1_output_patch(attn1_output_patch)
+    reference_only_model = model.clone()
+    reference_only_model.set_model_unet_function_wrapper(unet_function_wrapper)
+    reference_only_model.set_model_attn1_patch(attn1_patch)
+    reference_only_model.set_model_attn1_output_patch(attn1_output_patch)
 
-    attn1_patch_index = model.model_options["transformer_options"]["patches"]["attn1_patch"].index(attn1_patch)
-    attn1_output_patch_index = model.model_options["transformer_options"]["patches"]["attn1_output_patch"].index(attn1_output_patch)
-
-    return (model,)
+    return (reference_only_model,)
